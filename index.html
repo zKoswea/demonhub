@@ -1,987 +1,755 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>DemonHub - Geometry Dash Demon List</title>
-
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      background: #f4f4f4;
-      color: #222;
-    }
-
-    /* HEADER */
-
-    header {
-      background: white;
-      border-bottom: 4px solid #c62828;
-      padding: 25px 20px;
-      text-align: center;
-    }
-
-    header h1 {
-      font-size: 42px;
-      color: #222;
-      margin-bottom: 8px;
-    }
-
-    header h1 span {
-      color: #c62828;
-    }
-
-    header p {
-      color: #666;
-      font-size: 17px;
-    }
-
-    .top-buttons {
-      margin-top: 20px;
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .top-buttons a,
-    .top-buttons button {
-      text-decoration: none;
-      background: #c62828;
-      color: white;
-      padding: 11px 18px;
-      border-radius: 6px;
-      font-weight: bold;
-      border: none;
-      cursor: pointer;
-      font-size: 15px;
-      transition: 0.2s;
-    }
-
-    .top-buttons a:hover,
-    .top-buttons button:hover {
-      background: #9f1f1f;
-      transform: translateY(-2px);
-    }
-
-    /* SEARCH */
-
-    .search-container {
-      display: flex;
-      justify-content: center;
-      padding: 25px 15px;
-    }
-
-    #search {
-      width: min(650px, 90%);
-      padding: 15px 18px;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 7px;
-      outline: none;
-    }
-
-    #search:focus {
-      border-color: #c62828;
-    }
-
-    /* MAIN */
-
-    .container {
-      width: min(1200px, 94%);
-      margin: auto;
-      padding-bottom: 50px;
-    }
-
-    .section-title {
-      margin: 10px 0 20px;
-      padding-left: 12px;
-      border-left: 5px solid #c62828;
-      font-size: 24px;
-    }
-
-    /* LEVEL CARD */
-
-    .level-card {
-      background: white;
-      border-radius: 10px;
-      margin-bottom: 18px;
-      padding: 18px;
-
-      display: flex;
-      gap: 20px;
-
-      box-shadow: 0 3px 12px rgba(0,0,0,0.10);
-      border: 1px solid #ddd;
-
-      transition: 0.2s;
-    }
-
-    .level-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 18px rgba(0,0,0,0.14);
-    }
-
-    /* TOP 10 HIGHLIGHT */
-
-    .level-card.top-ten {
-      border-left: 6px solid #c62828;
-    }
-
-    /* THUMBNAIL */
-
-    .thumbnail {
-      width: 280px;
-      height: 158px;
-      object-fit: cover;
-      border-radius: 7px;
-      background: #ddd;
-      flex-shrink: 0;
-    }
-
-    /* MAIN LEVEL INFO */
-
-    .level-info {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .level-name {
-      font-size: 28px;
-      margin-bottom: 14px;
-      color: #222;
-    }
-
-    .rank {
-      color: #c62828;
-      font-weight: bold;
-    }
-
-    .info-line {
-      margin: 7px 0;
-      font-size: 16px;
-      color: #444;
-    }
-
-    .info-line strong {
-      color: #222;
-    }
-
-    .points {
-      display: inline-block;
-      margin-top: 10px;
-      padding: 8px 13px;
-      background: #eee;
-      border-radius: 6px;
-      font-weight: bold;
-    }
-
-    /* RIGHT SIDE INFO */
-
-    .right-info {
-      width: 210px;
-      border-left: 1px solid #ddd;
-      padding-left: 20px;
-      flex-shrink: 0;
-    }
-
-    .right-info h3 {
-      color: #c62828;
-      margin-bottom: 12px;
-      font-size: 17px;
-    }
-
-    .right-info p {
-      margin-bottom: 9px;
-      font-size: 14px;
-      color: #444;
-    }
-
-    /* VERIFICATION BUTTON */
-
-    .verification-button {
-      display: block;
-      margin-top: 14px;
-      text-align: center;
-      text-decoration: none;
-      background: #c62828;
-      color: white;
-      padding: 10px;
-      border-radius: 6px;
-      font-weight: bold;
-    }
-
-    .verification-button:hover {
-      background: #9f1f1f;
-    }
-
-    .disabled-button {
-      background: #aaa;
-      cursor: default;
-    }
-
-    /* STATS MODAL */
-
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-
-      width: 100%;
-      height: 100%;
-
-      background: rgba(0,0,0,0.55);
-
-      align-items: center;
-      justify-content: center;
-    }
-
-    .modal-content {
-      background: white;
-      width: min(450px, 90%);
-      padding: 28px;
-      border-radius: 10px;
-      position: relative;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    }
-
-    .modal-content h2 {
-      margin-bottom: 20px;
-      color: #c62828;
-    }
-
-    .stat-line {
-      padding: 12px 0;
-      border-bottom: 1px solid #ddd;
-    }
-
-    .close {
-      position: absolute;
-      top: 12px;
-      right: 18px;
-
-      font-size: 28px;
-      font-weight: bold;
-
-      cursor: pointer;
-      color: #777;
-    }
-
-    .close:hover {
-      color: #c62828;
-    }
-
-    /* FOOTER */
-
-    footer {
-      text-align: center;
-      padding: 30px 15px;
-      background: white;
-      border-top: 1px solid #ddd;
-      color: #666;
-    }
-
-    /* MOBILE */
-
-    @media (max-width: 850px) {
-
-      .level-card {
-        flex-direction: column;
-      }
-
-      .thumbnail {
-        width: 100%;
-        height: auto;
-        aspect-ratio: 16 / 9;
-      }
-
-      .right-info {
-        width: 100%;
-        border-left: none;
-        border-top: 1px solid #ddd;
-        padding-left: 0;
-        padding-top: 18px;
-      }
-
-      .level-name {
-        font-size: 24px;
-      }
-
-    }
-
-  </style>
-</head>
-
-<body>
-
-  <!-- HEADER -->
-
-  <header>
-
-    <h1>
-      <span>Demon</span>Hub
-    </h1>
-
-    <p>
-      A community-driven Geometry Dash demon list ranking the Top 75 hardest demons.
-    </p>
-
-    <div class="top-buttons">
-
-      <button onclick="openStats()">
-        📊 Stats Viewer
-      </button>
-
-      <!-- CHANGE THIS LINK TO YOUR DISCORD INVITE -->
-
-      <a href="#" id="discordLink" target="_blank">
-        💬 Discord Server
-      </a>
-
-    </div>
-
-  </header>
-
-
-  <!-- SEARCH -->
-
-  <div class="search-container">
-
-    <input
-      type="text"
-      id="search"
-      placeholder="Search for a level..."
-    >
-
-  </div>
-
-
-  <!-- LEVEL LIST -->
-
-  <div class="container">
-
-    <h2 class="section-title">
-      Demon List
-    </h2>
-
-    <div id="levels-container"></div>
-
-  </div>
-
-
-  <!-- STATS POPUP -->
-
-  <div class="modal" id="statsModal">
-
-    <div class="modal-content">
-
-      <span
-        class="close"
-        onclick="closeStats()"
-      >
-        ×
-      </span>
-
-      <h2>📊 DemonHub Stats</h2>
-
-      <div class="stat-line">
-        Total Spots:
-        <strong id="totalSpots"></strong>
-      </div>
-
-      <div class="stat-line">
-        Filled Levels:
-        <strong id="filledLevels"></strong>
-      </div>
-
-      <div class="stat-line">
-        Coming Soon:
-        <strong id="comingSoon"></strong>
-      </div>
-
-      <div class="stat-line">
-        Total Points:
-        <strong id="totalPoints"></strong>
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <!-- FOOTER -->
-
-  <footer>
-    DemonHub • Community Geometry Dash Demon List
-  </footer>
-
-
-  <script>
-
-    /*
-    =====================================================
-
-                  LEVEL DATA
-
-    The website automatically creates ALL 75 spots.
-
-    You only edit the information below.
-
-    #1 = levels[0]
-    #2 = levels[1]
-    #3 = levels[2]
-    #4 = levels[3]
-
-    etc.
-
-    =====================================================
-    */
-
-
-    const levels = Array.from(
-      { length: 75 },
-      (_, index) => ({
-
-        rank: index + 1,
-
-        name: "Coming Soon",
-
-        host: "—",
-
-        verifier: "—",
-
-        points: 0,
-
-        thumbnail: "",
-
-        verification: "",
-
-        levelID: "—",
-
-        length: "—",
-
-        dateAdded: "—",
-
-        filled: false
-
-      })
-    );
-
-
-    /*
-    =====================================================
-
-                    LEVEL #1
-
-    =====================================================
-    */
-
-    levels[0] = {
-
-      rank: 1,
-
-      name: "Society",
-
-      host: "Neomarbilan",
-
-      verifier: "wPopoff",
-
-      points: 1000,
-
-      thumbnail: thumbnail: "https://zkoswea.github.io/demonhub/tt9fnfisaq0h1.jpeg",
-
-      verification: "https://www.youtube.com/watch?v=3CoEaH1CM7o",
-
-      levelID: "127323087",
-
-      length: "1:37",
-
-      dateAdded: "09/04/2026",
-
-      filled: true
-
+{
+  "discordLink": "https://discord.gg/your-invite-here",
+  "levels": [
+    {
+      "name": "Tidal Wave",
+      "creator": "OniLink",
+      "verifier": "Zoink",
+      "points": 500,
+      "id": "10565740",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
     },
-
-
-    /*
-    =====================================================
-
-                    LEVEL #2
-
-    =====================================================
-    */
-
-    levels[1] = {
-
-      rank: 2,
-
-      name: "Amethyst",
-
-      host: "iMist",
-
-      verifier: "wPopoff",
-
-      points: 950,
-
-      thumbnail: "https://zkoswea.github.io/demonhub/maxresdefault%20(3).jpg",
-
-      verification: "https://www.youtube.com/watch?v=4lfkzz1VCbA",
-
-      levelID: "119550490",
-
-      length: "1:42",
-
-      dateAdded: "09/04/2026",
-
-      filled: true
-
+    {
+      "name": "Sonic Wave",
+      "creator": "Cyclic, Adam",
+      "verifier": "Zoink",
+      "points": 470,
+      "id": "56634163",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
     },
-
-
-    /*
-    =====================================================
-
-                    LEVEL #3
-
-    =====================================================
-    */
-
-    levels[2] = {
-
-      rank: 3,
-
-      name: "Thinking Space II",
-
-      host: "CairoX",
-
-      verifier: "Zoink",
-
-      points: 900,
-
-      thumbnail: "https://zkoswea.github.io/demonhub/hq720.jpg",
-
-      verification: "https://www.youtube.com/watch?v=CELNmHwln_c",
-
-      levelID: "119544028",
-
-      length: "1:10",
-
-      dateAdded: "09/04/2026",
-
-      filled: true
-
+    {
+      "name": "Kenos",
+      "creator": "Riot, Exite",
+      "verifier": "Riot",
+      "points": 441,
+      "id": "68127913",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
     },
-
-
-    /*
-    =====================================================
-
-                    LEVEL #4
-
-    =====================================================
-    */
-
-    levels[3] = {
-
-      rank: 4,
-
-      name: "Flamewall",
-
-      host: "Narwall",
-
-      verifier: "Cautrocientos",
-
-      points: 850,
-
-      thumbnail: "https://zkoswea.github.io/demonhub/images.jpe",
-
-      verification: "https://www.youtube.com/watch?v=x4Io4zkWVRw",
-
-      levelID: "126242564",
-
-      length: "6:47",
-
-      dateAdded: "09/04/2026",
-
-      filled: true
-
+    {
+      "name": "Acheron",
+      "creator": "Zoink",
+      "verifier": "Zoink",
+      "points": 415,
+      "id": "111663149",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
     },
-
-
-    /*
-    =====================================================
-
-                TO ADD MORE LEVELS
-
-    Copy one of the sections above.
-
-    Example:
-
-    levels[4] = { ... }  = #5
-    levels[5] = { ... }  = #6
-    levels[6] = { ... }  = #7
-
-    The website already has all 75 spots.
-
-    =====================================================
-    */
-
-
-    /*
-    =====================================================
-
-                WEBSITE CODE
-
-    DON'T EDIT BELOW HERE
-
-    =====================================================
-    */
-
-
-    const container =
-      document.getElementById("levels-container");
-
-
-    function displayLevels(levelList) {
-
-      container.innerHTML = "";
-
-
-      levelList.forEach(level => {
-
-        const card =
-          document.createElement("div");
-
-
-        card.className =
-          "level-card";
-
-
-        if (level.rank <= 10) {
-
-          card.classList.add("top-ten");
-
-        }
-
-
-        let thumbnailHTML;
-
-
-        if (
-          level.thumbnail &&
-          level.thumbnail !== "IMAGE LINK HERE"
-        ) {
-
-          thumbnailHTML = `
-
-            <img
-              class="thumbnail"
-              src="${level.thumbnail}"
-              alt="${level.name}"
-            >
-
-          `;
-
-        }
-
-        else {
-
-          thumbnailHTML = `
-
-            <div
-              class="thumbnail"
-              style="
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                color:#777;
-              "
-            >
-
-              No Image Yet
-
-            </div>
-
-          `;
-
-        }
-
-
-        let verificationHTML;
-
-
-        if (
-          level.verification &&
-          level.verification !== "YOUTUBE LINK HERE"
-        ) {
-
-          verificationHTML = `
-
-            <a
-              class="verification-button"
-              href="${level.verification}"
-              target="_blank"
-            >
-
-              ▶ Verification
-
-            </a>
-
-          `;
-
-        }
-
-        else {
-
-          verificationHTML = `
-
-            <div
-              class="verification-button disabled-button"
-            >
-
-              ▶ Verification
-
-            </div>
-
-          `;
-
-        }
-
-
-        card.innerHTML = `
-
-          ${thumbnailHTML}
-
-
-          <div class="level-info">
-
-            <div class="level-name">
-
-              <span class="rank">
-                #${level.rank}
-              </span>
-
-              ${level.name}
-
-            </div>
-
-
-            <div class="info-line">
-
-              <strong>Hosted by:</strong>
-
-              ${level.host}
-
-            </div>
-
-
-            <div class="info-line">
-
-              <strong>Verified by:</strong>
-
-              ${level.verifier}
-
-            </div>
-
-
-            <div class="points">
-
-              ${level.points} Points
-
-            </div>
-
-          </div>
-
-
-          <div class="right-info">
-
-            <h3>
-              Level Info
-            </h3>
-
-
-            <p>
-
-              <strong>Level ID:</strong>
-
-              ${level.levelID}
-
-            </p>
-
-
-            <p>
-
-              <strong>Length:</strong>
-
-              ${level.length}
-
-            </p>
-
-
-            <p>
-
-              <strong>Date Added:</strong>
-
-              ${level.dateAdded}
-
-            </p>
-
-
-            ${verificationHTML}
-
-          </div>
-
-        `;
-
-
-        container.appendChild(card);
-
-      });
-
+    {
+      "name": "Avernus",
+      "creator": "Cursed",
+      "verifier": "Cursed",
+      "points": 390,
+      "id": "88357192",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Slaughterhouse",
+      "creator": "Bili",
+      "verifier": "Bili",
+      "points": 366,
+      "id": "77328471",
+      "length": "Extra Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Zodiac",
+      "creator": "Riot",
+      "verifier": "Riot",
+      "points": 344,
+      "id": "43567201",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Silent Clubstep",
+      "creator": "Cursed",
+      "verifier": "Cursed",
+      "points": 323,
+      "id": "59012384",
+      "length": "Medium",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "The Golden",
+      "creator": "Ryamu",
+      "verifier": "Ryamu",
+      "points": 304,
+      "id": "39284710",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Aftermath",
+      "creator": "Skullex",
+      "verifier": "Skullex",
+      "points": 286,
+      "id": "62310958",
+      "length": "Medium",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 11",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 268,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 12",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 252,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 13",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 237,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 14",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 223,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 15",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 209,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 16",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 197,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 17",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 185,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 18",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 174,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 19",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 163,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 20",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 153,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 21",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 144,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 22",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 135,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 23",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 127,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 24",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 119,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 25",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 112,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 26",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 106,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 27",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 99,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 28",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 93,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 29",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 88,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 30",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 82,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 31",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 77,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 32",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 73,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 33",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 68,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 34",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 64,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 35",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 60,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 36",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 57,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 37",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 53,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 38",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 50,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 39",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 47,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 40",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 44,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 41",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 41,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 42",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 39,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 43",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 37,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 44",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 34,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 45",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 32,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 46",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 30,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 47",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 29,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 48",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 27,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 49",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 25,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 50",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 24,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 51",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 22,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 52",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 21,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 53",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 20,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 54",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 18,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 55",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 17,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 56",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 16,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 57",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 15,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 58",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 14,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 59",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 14,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 60",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 13,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 61",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 12,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 62",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 11,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 63",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 11,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 64",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 10,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 65",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 9,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 66",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 9,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 67",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 8,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 68",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 8,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 69",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 7,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 70",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 7,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 71",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 6,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 72",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 6,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 73",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 6,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 74",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 5,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
+    },
+    {
+      "name": "Level 75",
+      "creator": "Unknown",
+      "verifier": "Unknown",
+      "points": 5,
+      "id": "00000000",
+      "length": "Long",
+      "video": "#",
+      "thumbnail": ""
     }
-
-
-    /*
-    =========================
-           STATS
-    =========================
-    */
-
-
-    function updateStats() {
-
-      const filled =
-        levels.filter(level => level.filled);
-
-      const empty =
-        levels.filter(level => !level.filled);
-
-
-      const totalPoints =
-        filled.reduce(
-          (total, level) =>
-            total + Number(level.points || 0),
-          0
-        );
-
-
-      document
-        .getElementById("totalSpots")
-        .textContent =
-          levels.length;
-
-
-      document
-        .getElementById("filledLevels")
-        .textContent =
-          filled.length;
-
-
-      document
-        .getElementById("comingSoon")
-        .textContent =
-          empty.length;
-
-
-      document
-        .getElementById("totalPoints")
-        .textContent =
-          totalPoints;
-
-    }
-
-
-    function openStats() {
-
-      updateStats();
-
-      document
-        .getElementById("statsModal")
-        .style.display =
-          "flex";
-
-    }
-
-
-    function closeStats() {
-
-      document
-        .getElementById("statsModal")
-        .style.display =
-          "none";
-
-    }
-
-
-    window.onclick = function(event) {
-
-      const modal =
-        document.getElementById("statsModal");
-
-
-      if (event.target === modal) {
-
-        closeStats();
-
-      }
-
-    };
-
-
-    /*
-    =========================
-           SEARCH
-    =========================
-    */
-
-
-    const search =
-      document.getElementById("search");
-
-
-    search.addEventListener(
-      "input",
-      function() {
-
-        const searchText =
-          search.value.toLowerCase();
-
-
-        const filteredLevels =
-          levels.filter(level =>
-
-            level.name
-              .toLowerCase()
-              .includes(searchText)
-
-          );
-
-
-        displayLevels(filteredLevels);
-
-      }
-    );
-
-
-    /*
-    =========================
-        START WEBSITE
-    =========================
-    */
-
-
-    displayLevels(levels);
-
-  </script>
-
-</body>
-</html>
+  ]
+}
